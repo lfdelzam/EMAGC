@@ -1,7 +1,5 @@
 #!/bin/bash -l
 
-#### bash EMAGCpoly.sh -D=/root/all_maker_test/MAGS_euka -E=".fa" -S=10000 -P=5 -B="conda,busco" -K="conda,euka_prot" -Q=y -U=none -N=1 -R=none -L=eukaryota_odb10
-
 err_report() {
     echo "Error on line $1 - script EMAGCpoly.sh"
     exit 1
@@ -135,7 +133,7 @@ esac
 done
 #--checking paths -----
 if [[ "$path_to_MAGs_dir" != /* ]]; then
-    echo "Please provide an absolute path -D=/absolute/path/to/$path_to_MAGs_dir"
+    echo "Please provide an absolute path -D=/absolute/path/to/MAGs_dir"
     exit 0
 fi
 if [[ "$ProteinDB" != /* ]] && [[ "$ProteinDB" != none ]]; then
@@ -162,17 +160,19 @@ wkd=$(pwd)
 cd $path_to_MAGs_dir
 Lgs=($(ls *$mag_ext))
 
-cd $wkd
 #Running gene_calling for each MAG
 for m in "${Lgs[@]}"
 do
+  cd $wkd
   name=$(echo ${m%.*}) #removing extention
-  mkdir -p Gene_calling_$name
-  cd Gene_calling_$name
-  mag_path="$path_to_MAGs_dir/$m"
-  echo -e "INFO: ********  Starting gene calling on mag $m  ********* \n"
-  bash $wkd/EMAGCsingle.sh -m=$mag_path -s=$mincontigsize -p=$thr -b=$BEnv -k=$MKEnv -q=$Rmv_tmp -u=$ProteinDB -r=$RNAdb -n=$SNAP_TR -l=$Busco_Lineage -a=$antENV -w=$pfamDB -v=$Evalue
-
-  echo -e "\nINFO: ********  Gene calling on mag $m is done *********** \n"
-
+  if [ ! -d "Gene_calling_$name" ]; then
+     mkdir -p Gene_calling_$name
+     cd Gene_calling_$name
+     mag_path="$path_to_MAGs_dir/$m"
+     echo -e "INFO: ********  Starting gene calling on mag $m  ********* \n"
+     bash $wkd/EMAGCsingle.sh -m=$mag_path -s=$mincontigsize -p=$thr -b="$BEnv" -k="$MKEnv" -q=$Rmv_tmp -u=$ProteinDB -r=$RNAdb -n=$SNAP_TR -l=$Busco_Lineage -a="$antENV" -w=$pfamDB -v=$Evalue -x=$wkd
+     echo -e "\nINFO: ********  Gene calling on mag $m is done *********** \n"
+  else
+     echo "Directory Gene_calling_$name already exists"
+  fi
 done

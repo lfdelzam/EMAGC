@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Output Description" href="Output.html" />
     <link rel="prev" title="Installation" href="Installation.html" /> 
 </head>
 
@@ -86,6 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#several-mags">Several MAGs</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Output.html">Output Description</a></li>
 </ul>
 
             
@@ -166,7 +168,8 @@
 <span class="o">-</span><span class="n">k</span><span class="o">=&lt;</span><span class="n">conda</span> <span class="ow">or</span> <span class="n">module</span><span class="p">,</span><span class="n">MAKER</span> <span class="n">environment</span> <span class="ow">or</span> <span class="n">package</span> <span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="o">-</span><span class="n">k</span><span class="o">=</span><span class="s2">&quot;conda,maker_env&quot;</span><span class="o">&gt;</span>
 <span class="o">-</span><span class="n">a</span><span class="o">=&lt;</span><span class="n">conda</span> <span class="ow">or</span> <span class="n">module</span><span class="p">,</span><span class="n">hmmer</span> <span class="n">environment</span> <span class="ow">or</span> <span class="n">package</span> <span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span><span class="o">=</span><span class="s2">&quot;conda,annot_env&quot;</span><span class="p">,</span> <span class="n">default</span> <span class="o">-</span><span class="n">a</span><span class="o">=</span><span class="n">skip</span><span class="o">&gt;</span>
 <span class="o">-</span><span class="n">l</span><span class="o">=&lt;</span><span class="n">busco</span> <span class="n">lineage</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">eukaryota_odb10</span><span class="p">)</span> <span class="ow">or</span> <span class="n">auto</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">eukaryota_odb10</span><span class="o">&gt;</span>
-<span class="o">-</span><span class="n">n</span><span class="o">=&lt;</span><span class="n">number</span> <span class="n">of</span> <span class="n">SNAP</span> <span class="n">training</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span>\<span class="n">n</span> <span class="o">-</span><span class="n">u</span><span class="o">=&lt;</span><span class="n">absolute</span> <span class="n">path</span> <span class="n">to</span> <span class="n">protein</span> <span class="n">db</span> <span class="ow">or</span> <span class="n">none</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">none</span><span class="o">&gt;</span>
+<span class="o">-</span><span class="n">n</span><span class="o">=&lt;</span><span class="n">number</span> <span class="n">of</span> <span class="n">SNAP</span> <span class="n">training</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span>
+<span class="o">-</span><span class="n">u</span><span class="o">=&lt;</span><span class="n">absolute</span> <span class="n">path</span> <span class="n">to</span> <span class="n">protein</span> <span class="n">db</span> <span class="ow">or</span> <span class="n">none</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">none</span><span class="o">&gt;</span>
 <span class="o">-</span><span class="n">r</span><span class="o">=&lt;</span><span class="n">absolute</span> <span class="n">path</span> <span class="n">to</span> <span class="n">cDNA</span> <span class="n">sequence</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">fasta</span> <span class="nb">format</span> <span class="kn">from</span> <span class="nn">an</span> <span class="n">alternate</span> <span class="n">organism</span> <span class="ow">or</span> <span class="n">none</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">none</span><span class="o">&gt;</span>
 <span class="o">-</span><span class="n">w</span><span class="o">=&lt;</span><span class="n">absolute</span> <span class="n">path</span> <span class="n">to</span> <span class="n">Pfam</span> <span class="n">hmm</span> <span class="n">database</span> <span class="ow">or</span> <span class="n">none</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">none</span><span class="o">&gt;</span>
 <span class="o">-</span><span class="n">v</span><span class="o">=&lt;</span><span class="n">E</span><span class="o">-</span><span class="n">value</span> <span class="n">threshold</span> <span class="n">used</span> <span class="n">during</span> <span class="n">Pfam</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="o">&gt;</span>
@@ -203,6 +206,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Output.html" class="btn btn-neutral float-right" title="Output Description" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="Installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -18,7 +18,8 @@ bash EMAGCsingle.sh [options] ::
     -k=<conda or module,MAKER environment or package name, e.g., -k="conda,maker_env">
     -a=<conda or module,hmmer environment or package name, e.g., -a="conda,annot_env", default -a=skip>
     -l=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>
-    -n=<number of SNAP training, default=1>\n -u=<absolute path to protein db or none, default=none>
+    -n=<number of SNAP training, default=1>
+    -u=<absolute path to protein db or none, default=none>
     -r=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>
     -w=<absolute path to Pfam hmm database or none, default=none>
     -v=<E-value threshold used during Pfam annotation, default=0.001>

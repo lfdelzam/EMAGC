@@ -1,7 +1,5 @@
 #!/bin/bash -l
 
-#### bash EMAGCsingle.sh -m=/root/all_maker_test/MAGS_euka/P1994_119_eukbin48.fa -s=10000 -p=5 -b="conda,busco" -k="conda,euka_prot" -q=y -u=none -n=1 -r=none -l=auto
-
 err_report() {
     echo "Error on line $1 - script EMAGCsingle.sh"
     exit 1
@@ -27,6 +25,7 @@ busco_lineage=eukaryota_odb10
 ANTENV=skip
 PfamDB="Pfam-A.hmm"
 evalue=0.001
+real_pwd=$(pwd)
 
 for i in "$@"
 do
@@ -116,6 +115,11 @@ case $i in
     shift # past argument
     ;;
 
+    -x=*|--realwd=*)
+    real_pwd="${i#*=}"
+    shift # past argument
+    ;;
+
     *)
     echo -e '\nUsage: bash EMAGCsingle.sh [options]\n -m=<absolute path to mag file>\n -s=<min contig size for SNAP training, default=10000>\n -p=<threads>\n -b=<conda or module,busco environment or package name, e.g -b="conda,busco_env">\n -k=<conda or module,MAKER environment or package name, e.g., -k="module,maker">\n -a=<conda or module,hmmer environment or package name, e.g., -a="conda,annot", default -a=skip>\n -l=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -n=<number of SNAP training, default=1>\n -u=<absolute path to protein db or none, default=none>\n -r=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -w=<absolute path to Pfam hmm database or none, default=none>\n -v=<E-value threshold used during Pfam annotation, default=0.001>\n -q=<remove all temporary files, y for yes or n for no, default=no>\n'
     echo -e "Description:\nThis program predicts genes from an Eukaryotic MAG.\nIt first trains Augustus through BUSCO V4.0.2.\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
@@ -153,7 +157,6 @@ Aug_SPE="BUSCO_"$mag_name
 workdir=$(pwd)
 
 #***************************** Main ************************************
-
 #### BUSCO ################################################################
 
 if [[ "$BENV" != skip ]]; then #In case the user have already run BUSCO and doesn't want to run it again before evaluating new parameters in MAKER
@@ -183,11 +186,12 @@ if [[ "$BENV" != skip ]]; then #In case the user have already run BUSCO and does
 
     mv $mag_name busco_output_$mag_name
 
-    echo "INFO: AUGUSTUS training with BUSCO is done"
     if [[ "$remove_tmp" == y* ]] || [[ "$remove_tmp" == Y* ]]; then
       rm -r tmp_opt_BUSCO_$mag_name
       rm -r busco_downloads
     fi
+
+#    echo "INFO: BUSCO is done"
 
   #Deactivate Virtual Environment  -----------
     if [[ "$benvr" == "conda" ]]; then
@@ -222,6 +226,9 @@ if [[ "$MKENV" != skip ]]; then
 #           cat $workdir/$GFF_DIRECTORY/*.gff > allgff
 #           mkdir -p tmp_Pdb
 #           mv allgff tmp_Pdb/augustus_pred.gff
+        else
+           echo -e "ERROR: AUGUSTUS training with BUSCO was unsuccesful. Directory busco_output_$mag_name/$i/augustus_output/retraining_parameters/$Aug_SPE doesn't exit, and Augustus specie $Aug_SPE cannot be created.\nIt is highly probable that $mag_name$mag_ext is not an Eukaryotic MAG"
+           exit 0
         fi
     done
 
@@ -387,7 +394,7 @@ if [[ "$MKENV" != skip ]]; then
     echo "Median protein size: $(cut -f3,9 $mag_name.all.gff | grep '^mRNA' | cut -d '|' -f9 | sort -n | awk ' { a[i++]=$1; } END { x=int((i+1)/2); if (x < (i+1)/2) print (a[x-1]+a[x])/2; else print a[x-1]; } ') "
     echo "Average protein size: $(cut -f3,9 $mag_name.all.gff | grep '^mRNA' | cut -d '|' -f9 | awk 'BEGIN{C=0}; {C=C+$1}; END{print C/NR}')"
 
-    echo "Now Predictions are ready in the folder FINAL_RESULT/ "
+    echo "INFO: Now Predictions are ready and stored in the folder FINAL_RESULT/ "
 
     cd $workdir
 
@@ -421,6 +428,9 @@ if [[ "$ANTENV" != skip ]]; then
   elif [[ "$antenvr" == "module" ]]; then
     module load $ant_env
   fi
+
+  echo "INFO: Starting with Pfam annotations"
+
   mkdir -p FINAL_RESULT
   cd FINAL_RESULT/
   mkdir -p annotation_pfam
@@ -431,7 +441,11 @@ if [[ "$ANTENV" != skip ]]; then
   hmmsearch --cpu $threads --noali -E $evalue -o $out1 --domtblout $out_dom --tblout $out_t $PfamDB $input_fasta
   annotated=$(grep -v "^#" $out_t | cut -d " " -f1 | sort -u | wc -l)
   echo "Total Pfam-annotated proteins $annotated (a hit per protein)"
-  echo "Pfam-annotation is ready in the folder FINAL_RESULT/annotation_pfam/"
+  echo "INFO: Pfam-annotation is ready. Files stored in the folder FINAL_RESULT/annotation_pfam/"
+
+  echo "Extracting sequences with pfam hit (best hit)"
+  python $real_pwd/src/extract_genes_with_pfam_hit.py -i $out_t -p $input_fasta -n $mag_name.all.maker.transcripts.fasta -a $mag_name.all.gff
+  echo "INFO: The Pfam annotated sequences (proteins.faa, genes.fna), and the corresponding annotation file (annotation.gff) are stored in the folder FINAL_RESULT/Genes_with_pfam_hit/"
 
   cd $workdir
 

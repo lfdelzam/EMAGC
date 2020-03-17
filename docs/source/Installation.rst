@@ -6,6 +6,7 @@ Required software
 
 * BUSCO >= 4.0.2
 * MAKER
+* python3
 
 If you want to annotate the predicted proteins against the Pfam database:
 
@@ -78,4 +79,6 @@ Clone the repository from GitHub::
 
 
 This directory contains the scripts:
-EMAGCpoly.sh and EMAGCsingle.sh
+   * EMAGCpoly.sh
+   * EMAGCsingle.sh
+   * src/extract_genes_with_pfam_hit.py
