@@ -1,3 +1,10 @@
+EMAGC
+=====
+
+Eukaryotic Metagenome-Assembled Genome Gene Calling
+
+ab - initio gene finding in Eukaryotic MAGs
+
 Description
 ===========
 
@@ -27,5 +34,3 @@ Contents
    Installation
    Usage
    Output
-
-

@@ -13,8 +13,8 @@ If you want to annotate the predicted proteins against the Pfam database:
 * hmmer
 * Pfam-A.hmm database
 
-Tips for installing the required software:
-------------------------------------------
+Tips for installing the required software
+-----------------------------------------
 
 The easiest and highly recommended way to install the required software is through conda in isolated environments.
 Bellow, an example of how to install Miniconda3 (on Linux) and the pipeline is presented:
@@ -81,4 +81,4 @@ Clone the repository from GitHub::
 This directory contains the scripts:
    * EMAGCpoly.sh
    * EMAGCsingle.sh
-   * src/extract_genes_with_pfam_hit.py
+   * src/extract_genes_with_pfam_best_hit.py

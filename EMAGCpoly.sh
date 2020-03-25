@@ -6,19 +6,21 @@ err_report() {
 }
 
 trap 'err_report $LINENO' ERR
-
+Usage='\nUsage: bash EMAGCpoly.sh [options]\n -D=<path to mag directory>\n -E=<MAG extention, default ".fa">\n -S=<min contig size for SNAP training, default=5000>\n -P=<threads>\n -B=<conda or module,busco environment or package name, e.g., -B="conda,busco_env">\n -K=<conda or module,MAKER environment or package name, e.g., -K="module,maker">\n -A=<conda or module,hmmer environment or package name, e.g., -A="conda,annot", default -A=skip>\n -L=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -N=<number of SNAP training, default=1>\n -U=<absolute path to protein db or none, default=none>\n -R=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -W=<absolute path to Pfam hmm database or none, default=none>\n -V=<E-value threshold used during Pfam annotation, default=0.001>\n -Q=<remove all temporary files, y for yes or n for no, default=no>\n -F=<Force the re-execution, yes or no, default=no>\n'
+Description="Description:\nThis program predicts genes from Eukaryotic MAGs.\nIt first trains Augustus through BUSCO V4.0.2.\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
+Observation="Observation:\nIt can be used either the same or different virtual environments for BUSCO, MAKER and HMMER, e.g., conda activate busco, conda activate maker; or module load busco, module load maker.\nIf you need to load a module before the actual BUSCO or MAKER module, set it by entering both module names, e.g., -K='module,bioinfo-tools maker'\nIf you have already run the script, and only want to re-run MAKER (and not busco), then set -B=skip\nThe same goes if you want to skip MAKER -K=skip or Pfam annotation, -A=skip"
 #*******     Argument parse **********************************************
 if [ $# -eq 0 ]; then
     echo -e "\nNo arguments provided"
-    echo -e '\nUsage: bash EMAGCpoly.sh [options]\n -D=<path to mag directory>\n -E=<MAG extention, default ".fa">\n -S=<min contig size for SNAP training, default=10000>\n -P=<threads>\n -B=<conda or module,busco environment or package name, e.g., -B="conda,busco_env">\n -K=<conda or module,MAKER environment or package name, e.g., -K="module,maker">\n -A=<conda or module,hmmer environment or package name, e.g., -A="conda,annot", default -A=skip>\n -L=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -N=<number of SNAP training, default=1>\n -U=<absolute path to protein db or none, default=none>\n -R=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -W=<absolute path to Pfam hmm database or none, default=none>\n -V=<E-value threshold used during Pfam annotation, default=0.001>\n -Q=<remove all temporary files, y for yes or n for no, default=no>\n'
-    echo -e "Description:\nThis program predicts genes from Eukaryotic MAGs.\nIt first trains Augustus through BUSCO V4.0.2.\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
-    echo -e "Observation:\nIt can be used either the same or different virtual environments for BUSCO, MAKER and HMMER, e.g., conda activate busco, conda activate maker; or module load busco, module load maker.\nIf you need to load a module before the actual BUSCO or MAKER module, set it by entering both module names, e.g., -K='module,bioinfo-tools maker'\nIf you have already run the script, and only want to re-run MAKER (and not busco), then set -B=skip\nThe same goes if you want to skip MAKER -K=skip or Pfam annotation, -A=skip"
+    echo -e "${Usage}"
+    echo -e "${Description}"
+    echo -e "${Observation}"
     exit 1
 fi
 
 ###defaults
 mag_ext=".fa"
-mincontigsize=10000
+mincontigsize=5000
 Rmv_tmp=no
 ProteinDB=none
 RNAdb=none
@@ -27,17 +29,13 @@ Busco_Lineage=eukaryota_odb10
 antENV=skip
 pfamDB="Pfam-A.hmm"
 Evalue=0.001
+RI=no
 
 for i in "$@"
 do
 case $i in
    -D=*|--mag_directory=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -D No supplied"
-    exit 0
-    else
-      path_to_MAGs_dir="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -D No supplied"; exit 0; else path_to_MAGs_dir="${i#*=}"; fi
     shift # past argument
     ;;
 
@@ -52,29 +50,17 @@ case $i in
     ;;
 
     -P=*|--CPUs=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -P No supplied"
-    exit 0
-    else thr="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -P No supplied"; exit 0; else thr="${i#*=}"; fi
     shift # past argument
     ;;
 
     -B=*|--Busco_Environment=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -B No supplied"
-    exit 0
-    else  BEnv="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -B No supplied"; exit 0; else  BEnv="${i#*=}"; fi
     shift # past argument
     ;;
 
     -K=*|--Maker_Environment=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -K No supplied"
-    exit 0
-    else  MKEnv="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -K No supplied"; exit 0; else  MKEnv="${i#*=}"; fi
     shift # past argument
     ;;
 
@@ -122,10 +108,15 @@ case $i in
     shift # past argument
     ;;
 
+    -F=*|--re_run=*)
+    RI="${i#*=}"
+    shift # past argument
+    ;;
+
     *)
-    echo -e '\nUsage: bash EMAGCpoly.sh [options]\n -D=<path to mag directory>\n -E=<MAG extention, default ".fa">\n -S=<min contig size for SNAP training, default=10000>\n -P=<threads>\n -B=<conda or module,busco environment or package name, e.g., -B="conda,busco_env">\n -K=<conda or module,MAKER environment or package name, e.g., -K="module,maker">\n -A=<conda or module,hmmer environment or package name, e.g., -A="conda,annot", default -A=skip>\n -L=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -N=<number of SNAP training, default=1>\n -U=<absolute path to protein db or none, default=none>\n -R=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -W=<absolute path to Pfam hmm database or none, default=none>\n -V=<E-value threshold used during Pfam annotation, default=0.001>\n -Q=<remove all temporary files, y for yes or n for no, default=no>\n'
-    echo -e "Description:\nThis program predicts genes from Eukaryotic MAGs.\nIt first trains Augustus through BUSCO V4.0.2.\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
-    echo -e "Observation:\nIt can be used either the same or different virtual environments for BUSCO, MAKER and HMMER, e.g., conda activate busco, conda activate maker; or module load busco, module load maker.\nIf you need to load a module before the actual BUSCO or MAKER module, set it by entering both module names, e.g., -K='module,bioinfo-tools maker'\nIf you have already run the script, and only want to re-run MAKER (and not busco), then set -B=skip\nThe same goes if you want to skip MAKER -K=skip or Pfam annotation, -A=skip"
+    echo -e "${Usage}"
+    echo -e "${Description}"
+    echo -e "${Observation}"
     exit 0
     ;;
 
@@ -145,17 +136,14 @@ if [[ "$RNAdb" != /* ]] && [[ "$RNAdb" != none ]]; then
     exit 0
 fi
 
-
 if [[ "$antENV" != skip ]] && [[ "$antENV" != none ]] && [[ "$pfamDB" != /* ]]; then
     echo "Please provide an absolute path -W=/absolute/path/to/$pfamDB"
     exit 0
 fi
-
 #-----------------------
+if [ "$RI" == yes ]; then echo "Option - Force the re-execution - activated"; fi
 #***************************** Main ************************************
-
 wkd=$(pwd)
-
 #MAG_list
 cd $path_to_MAGs_dir
 Lgs=($(ls *$mag_ext))
@@ -164,8 +152,8 @@ Lgs=($(ls *$mag_ext))
 for m in "${Lgs[@]}"
 do
   cd $wkd
-  name=$(echo ${m%.*}) #removing extention
-  if [ ! -d "Gene_calling_$name" ]; then
+  name=$(echo ${m%$mag_ext}) #removing extention
+  if [ ! -d "Gene_calling_$name" ]  || [ "$RI" == yes ]; then
      mkdir -p Gene_calling_$name
      cd Gene_calling_$name
      mag_path="$path_to_MAGs_dir/$m"

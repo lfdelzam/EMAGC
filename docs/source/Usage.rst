@@ -44,3 +44,4 @@ bash EMAGCpoly.sh [options] ::
     -W=<absolute path to Pfam hmm database or none, default=none>
     -V=<E-value threshold used during Pfam annotation, default=0.001>
     -Q=<remove all temporary files, y for yes or n for no, default=no>
+    -F=<Force the re-execution, yes or no, default=no>

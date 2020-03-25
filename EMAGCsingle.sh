@@ -6,17 +6,19 @@ err_report() {
 }
 
 trap 'err_report $LINENO' ERR
-
+Usage='\nUsage: bash EMAGCsingle.sh [options]\n -m=<absolute path to mag file>\n -s=<min contig size for SNAP training, default=5000>\n -p=<threads>\n -b=<conda or module,busco environment or package name, e.g -b="conda,busco_env">\n -k=<conda or module,MAKER environment or package name, e.g., -k="module,maker">\n -a=<conda or module,hmmer environment or package name, e.g., -a="conda,annot", default -a=skip>\n -l=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -n=<number of SNAP training, default=1>\n -u=<absolute path to protein db or none, default=none>\n -r=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -w=<absolute path to Pfam hmm database or none, default=none>\n -v=<E-value threshold used during Pfam annotation, default=0.001>\n -q=<remove all temporary files, y for yes or n for no, default=no>\n'
+Description="Description:\nThis program predicts genes from an Eukaryotic MAG.\nIt first trains Augustus through BUSCO V4.0.2.\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
+Observation="Observation:\nIt can be used either the same or different virtual environments for BUSCO, MAKER and HMMER, e.g., conda activate busco, conda activate maker; or module load busco, module load maker.\nIf you need to load a module before the actual BUSCO or MAKER module, set it by entering both module names, e.g., -k='module,bioinfo-tools maker'\nIf you have already run the script, and only want to re-run MAKER (and not busco), then set -b=skip\nThe same goes if you want to skip MAKER -k=skip or Pfam annotation, -a=skip"
 #*******     Argument parse **********************************************
 if [ $# -eq 0 ]; then
 echo -e "\nNo arguments provided"
-echo -e '\nUsage: bash EMAGCsingle.sh [options]\n -m=<absolute path to mag file>\n -s=<min contig size for SNAP training, default=10000>\n -p=<threads>\n -b=<conda or module,busco environment or package name, e.g -b="conda,busco_env">\n -k=<conda or module,MAKER environment or package name, e.g., -k="module,maker">\n -a=<conda or module,hmmer environment or package name, e.g., -a="conda,annot", default -a=skip>\n -l=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -n=<number of SNAP training, default=1>\n -u=<absolute path to protein db or none, default=none>\n -r=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -w=<absolute path to Pfam hmm database or none, default=none>\n -v=<E-value threshold used during Pfam annotation, default=0.001>\n -q=<remove all temporary files, y for yes or n for no, default=no>\n'
-echo -e "Description:\nThis program predicts genes from an Eukaryotic MAG.\nIt first trains Augustus through BUSCO V4.0.2.\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
-echo -e "Observation:\nIt can be used either the same or different virtual environments for BUSCO, MAKER and HMMER, e.g., conda activate busco, conda activate maker; or module load busco, module load maker.\nIf you need to load a module before the actual BUSCO or MAKER module, set it by entering both module names, e.g., -k='module,bioinfo-tools maker'\nIf you have already run the script, and only want to re-run MAKER (and not busco), then set -b=skip\nThe same goes if you want to skip MAKER -k=skip or Pfam annotation, -a=skip"
+echo -e "${Usage}"
+echo -e "${Description}"
+echo -e "${Observation}"
     exit 1
 fi
 ###defaults
-mincontig=10000
+mincontig=5000
 remove_tmp=no
 proteinDB=none
 RNADB=none
@@ -31,11 +33,8 @@ for i in "$@"
 do
 case $i in
    -m=*|--mag_file=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -m No supplied"
-    exit 0
-    else path_to_genome="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -m No supplied"; exit 0
+    else path_to_genome="${i#*=}"; fi
     shift # past argument
     ;;
 
@@ -50,29 +49,20 @@ case $i in
     ;;
 
     -p=*|--threads=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -p No supplied"
-    exit 0
-    else threads="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -p No supplied"; exit 0
+    else threads="${i#*=}"; fi
     shift # past argument
     ;;
 
     -b=*|--busco_environment=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -b No supplied"
-    exit 0
-    else BENV="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -b No supplied"; exit 0
+    else BENV="${i#*=}"; fi
     shift # past argument
     ;;
 
     -k=*|--maker_environment=*)
-    if [ -z "${i#*=}" ];  then
-    echo "value to argument -k No supplied"
-    exit 0
-    else MKENV="${i#*=}"
-    fi
+    if [ -z "${i#*=}" ];  then echo "value to argument -k No supplied"; exit 0
+    else MKENV="${i#*=}"; fi
     shift # past argument
     ;;
 
@@ -121,9 +111,9 @@ case $i in
     ;;
 
     *)
-    echo -e '\nUsage: bash EMAGCsingle.sh [options]\n -m=<absolute path to mag file>\n -s=<min contig size for SNAP training, default=10000>\n -p=<threads>\n -b=<conda or module,busco environment or package name, e.g -b="conda,busco_env">\n -k=<conda or module,MAKER environment or package name, e.g., -k="module,maker">\n -a=<conda or module,hmmer environment or package name, e.g., -a="conda,annot", default -a=skip>\n -l=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -n=<number of SNAP training, default=1>\n -u=<absolute path to protein db or none, default=none>\n -r=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -w=<absolute path to Pfam hmm database or none, default=none>\n -v=<E-value threshold used during Pfam annotation, default=0.001>\n -q=<remove all temporary files, y for yes or n for no, default=no>\n'
-    echo -e "Description:\nThis program predicts genes from an Eukaryotic MAG.\nIt first trains Augustus through BUSCO V4.0.2.\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
-    echo -e "Observation:\nIt can be used either the same or different virtual environments for BUSCO, MAKER and HMMER, e.g., conda activate busco, conda activate maker; or module load busco, module load maker.\nIf you need to load a module before the actual BUSCO or MAKER module, set it by entering both module names, e.g., -k='module,bioinfo-tools maker'\nIf you have already run the script, and only want to re-run MAKER (and not busco), then set -b=skip\nThe same goes if you want to skip MAKER -k=skip or Pfam annotation, -a=skip"
+    echo -e "${Usage}"
+    echo -e "${Description}"
+    echo -e "${Observation}"
     exit 0
     ;;
 
@@ -210,7 +200,6 @@ fi
 if [[ "$MKENV" != skip ]]; then
    menvr=$(echo $MKENV | cut -d"," -f1)
    maker_env=$(echo $MKENV | cut -d"," -f2)
-
 
 #Creating AUGUSTUS specie and pred_gff to be used in MAKER
     cd busco_output_$mag_name
@@ -444,7 +433,7 @@ if [[ "$ANTENV" != skip ]]; then
   echo "INFO: Pfam-annotation is ready. Files stored in the folder FINAL_RESULT/annotation_pfam/"
 
   echo "Extracting sequences with pfam hit (best hit)"
-  python $real_pwd/src/extract_genes_with_pfam_hit.py -i $out_t -p $input_fasta -n $mag_name.all.maker.transcripts.fasta -a $mag_name.all.gff
+  python $real_pwd/src/extract_genes_with_pfam_best_hit.py -i $out_t -p $input_fasta -n $mag_name.all.maker.transcripts.fasta -a $mag_name.all.gff
   echo "INFO: The Pfam annotated sequences (proteins.faa, genes.fna), and the corresponding annotation file (annotation.gff) are stored in the folder FINAL_RESULT/Genes_with_pfam_hit/"
 
   cd $workdir

@@ -4,7 +4,7 @@ import os
 import argparse
 
 usage = 'extract_genes_with_pfam_hit.py [options]'
-description = 'This program extacts genes with pfam hit (best hit). Creates genes.fna, proteins.faa and annotation.gff files'
+description = 'This program extracts genes with pfam hit (best hit). Creates genes.fna, proteins.faa and annotation.gff files'
 
 parser = argparse.ArgumentParser(description=description, usage=usage)
 parser.add_argument ('-i', dest= 'inf', help='input file, --tblout from hmmsearch', required = True)
@@ -65,9 +65,9 @@ def extracting_gff(filein, fileout):
                         if copy_cl:
                             print(contig_line, file = foutp)
                             copy_cl = False
-                        nline = line.replace("augustus_masked-", "")
+                        non_name = sname.split("-")[0]+"-"
+                        nline = line.replace(non_name, "")
                         print(nline, file = foutp)
-
 
 #### MAIN
 
@@ -78,7 +78,8 @@ with open(args.inf, "r") as fin:
             line = line.split()
             target_name = line[0]
             shortname = target_name.replace("-mRNA-1", "")
-            name = target_name.replace("augustus_masked-", ">")
+            nonname= target_name.split("-")[0]+"-"
+            name = target_name.replace(nonname, ">")
             query_name = line [2]
             query_accession = line[3]
             score = line[5]
