@@ -4,14 +4,17 @@ Installation
 Required software
 ^^^^^^^^^^^^^^^^^
 
-* BUSCO >= 4.0.2
-* MAKER
-* python3
+`BUSCO <https://busco.ezlab.org/>`_ >= 4.0.2
+
+`MAKER <https://yandell-lab.org/software/maker_install.html/>`_   
+
+`python3 <https://www.python.org/>`_
 
 If you want to annotate the predicted proteins against the Pfam database:
 
-* hmmer
-* Pfam-A.hmm database
+`hmmer <http://hmmer.org/>`_
+
+`Pfam-A.hmm database <https://pfam.xfam.org/>`_
 
 Tips for installing the required software
 -----------------------------------------
@@ -19,7 +22,7 @@ Tips for installing the required software
 The easiest and highly recommended way to install the required software is through conda in isolated environments.
 Bellow, an example of how to install Miniconda3 (on Linux) and the pipeline is presented:
 
-I. Installing miniconda (Linux)
+I. Installing `miniconda <https://docs.conda.io/en/latest/miniconda.html/>`_ (Linux)
 
 Download miniconda::
 
@@ -50,8 +53,8 @@ It may be necessary to change RepeatMasker configuration. Please go to the Repea
 
     cd maker_env/share/RepeatMasker/
 
-and follows the instruction on https://wiki.hpcc.msu.edu/display/ITH/Installing+maker+using+conda
-particularly, please watch the video: https://wiki.hpcc.msu.edu/download/attachments/29655183/repeatmasker-small-copy.mp4?version=1&modificationDate=1558377146559&api=v2
+and follows the instruction `on the link <https://wiki.hpcc.msu.edu/display/ITH/Installing+maker+using+conda/>`_. 
+Particularly, please watch the `video <https://wiki.hpcc.msu.edu/download/attachments/29655183/repeatmasker-small-copy.mp4?version=1&modificationDate=1558377146559&api=v2>`_
 
 BUSCO
 -----
@@ -79,6 +82,7 @@ Clone the repository from GitHub::
 
 
 This directory contains the scripts:
+
    * EMAGCpoly.sh
    * EMAGCsingle.sh
    * src/extract_genes_with_pfam_best_hit.py
