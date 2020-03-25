@@ -14,7 +14,7 @@ This program predicts genes from Eukaryotic MAGs.
 * The predicted proteins are then annotated against the [Pfam](https://pfam.xfam.org/) database.
 
 
-A comprehensive documentation for EMAGC is hosted on [readthedocs](https://emagc.readsthedocs.io)
+A comprehensive documentation for EMAGC is hosted on [readthedocs](https://emagc.readthedocs.io/en/latest/)
  
 
 Installation
