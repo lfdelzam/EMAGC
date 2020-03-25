@@ -22,7 +22,7 @@ Installation
 
 Clone the repository from GitHub:
 
-    git clone https://github.com/EnvGen/EMAGC
+    git clone https://github.com/lfdelzam/EMAGC
 
 This directory contains the scripts:
 
