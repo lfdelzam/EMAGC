@@ -6,16 +6,16 @@ Description
 
 This program predicts genes from Eukaryotic MAGs.
 
-* It first trains Augustus through BUSCO (https://busco.ezlab.org/busco_userguide.html)
+* It first trains Augustus through [BUSCO](https://busco.ezlab.org/busco_userguide.html)
 * Then, it predicts genes from contigs longer than a specific size (defined by the user) 
-    using Augustus (http://augustus.gobics.de/) in the MAKER pipeline (https://yandell-lab.org/software/maker.html).
-* The resulting genes are used to train SNAP (https://github.com/KorfLab/SNAP) through MAKER.
+    using [Augustus](http://augustus.gobics.de/) in the [MAKER](https://yandell-lab.org/software/maker.html) pipeline.
+* The resulting genes are used to train [SNAP](https://github.com/KorfLab/SNAP) through MAKER.
 * After SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.
-* The predicted proteins are then annotated against the Pfam database (https://pfam.xfam.org/).
+* The predicted proteins are then annotated against the [Pfam](https://pfam.xfam.org/) database.
 
 
-A comprehensive documentation for EMAGC is hosted on emagc.readsthedocs.io
-
+A comprehensive documentation for EMAGC is hosted on [readthedocs](https://emagc.readsthedocs.io)
+ 
 
 Installation
 ============
