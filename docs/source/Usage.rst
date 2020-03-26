@@ -12,7 +12,7 @@ One MAG
 bash EMAGCsingle.sh [options] ::
 
     -m=<absolute path to mag file>
-    -s=<min contig size for SNAP training, default=10000>
+    -s=<min contig size for SNAP training, default=5000>
     -p=<threads>
     -b=<conda or module,busco environment or package name, e.g -b="conda,busco_env">
     -k=<conda or module,MAKER environment or package name, e.g., -k="conda,maker_env">
@@ -32,7 +32,7 @@ bash EMAGCpoly.sh [options] ::
 
     -D=<absolute path to mag directory>
     -E=<MAG extention, default ".fa">
-    -S=<min contig size for SNAP training, default=10000>
+    -S=<min contig size for SNAP training, default=5000>
     -P=<threads>
     -B=<conda or module,busco environment or package name, e.g., -B="conda,busco_env">
     -K=<conda or module,MAKER environment or package name, e.g., -K="conda,maker_env">
