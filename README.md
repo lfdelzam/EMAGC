@@ -4,7 +4,7 @@ Eukaryotic Metagenome-Assembled Genome - Gene Calling
 Description
 ===========
 
-This program predicts genes from Eukaryotic MAGs.
+It predicts genes from Eukaryotic MAGs.
 
 * It first trains Augustus through [BUSCO](https://busco.ezlab.org/busco_userguide.html)
 * Then, it predicts genes from contigs longer than a specific size (defined by the user) 
