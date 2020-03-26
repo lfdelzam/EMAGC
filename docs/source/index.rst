@@ -8,7 +8,7 @@ ab - initio gene finding in Eukaryotic MAGs
 Description
 ===========
 
-This program predicts genes from Eukaryotic MAGs.
+It predicts genes from Eukaryotic MAGs.
 
 * It first trains Augustus through `BUSCO <https://busco.ezlab.org/busco_userguide.html/>`_.
 * Then, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the `MAKER <https://yandell-lab.org/software/maker.html/>`_.
