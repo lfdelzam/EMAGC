@@ -8,13 +8,13 @@ ab - initio gene finding in Eukaryotic MAGs
 Description
 ===========
 
-This program predicts genes from Eukaryotic MAGs.
+It predicts genes from Eukaryotic MAGs.
 
-* It first trains Augustus through BUSCO (https://busco.ezlab.org/busco_userguide.html).
-* Then, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline (https://yandell-lab.org/software/maker.html).
+* It first trains Augustus through `BUSCO <https://busco.ezlab.org/busco_userguide.html/>`_.
+* Then, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the `MAKER <https://yandell-lab.org/software/maker.html/>`_.
 * The resulting genes are used to train SNAP through MAKER.
 * After SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.
-* The predicted proteins are then annotated against the Pfam database (https://pfam.xfam.org/) using hmmsearch (http://eddylab.org/software/hmmer3/3.1b2/Userguide.pdf).
+* The predicted proteins are then annotated against the `Pfam <https://pfam.xfam.org/>`_ database using `hmmsearch <http://eddylab.org/software/hmmer3/3.1b2/Userguide.pdf/>`_
 
 Observation:
 
