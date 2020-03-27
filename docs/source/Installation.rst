@@ -59,7 +59,7 @@ BUSCO
 BUSCO version must be 4.0.2 or higher.
 Create a virtual environment for BUSCO::
 
-    conda create -n busco_env -c bioconda busco
+    conda create -n busco_env -c bioconda -c conda-forge busco
 
 
 hmmer
@@ -67,7 +67,7 @@ hmmer
 
 Create a virtual environment for hmmer::
 
-    conda create -n annot_env -c bioconda hmmer
+    conda create -n annot_env -c bioconda -c conda-forge hmmer python
 
 
 Download EMAGC

@@ -3,7 +3,7 @@
 import os
 import argparse
 
-usage = 'extract_genes_with_pfam_hit.py [options]'
+usage = 'python extract_genes_with_pfam_best_hit.py [options]'
 description = 'This program extracts genes with pfam hit (best hit). Creates genes.fna, proteins.faa and annotation.gff files'
 
 parser = argparse.ArgumentParser(description=description, usage=usage)
@@ -11,7 +11,7 @@ parser.add_argument ('-i', dest= 'inf', help='input file, --tblout from hmmsearc
 parser.add_argument ('-a', dest= 'a', help='input file, <mag_name>.gff from FINAL_RESULT', required = True)
 parser.add_argument ('-p', dest= 'p', help='input file, <mag_name>.all.maker.proteins.fasta from FINAL_RESULT', required = True)
 parser.add_argument ('-n', dest= 'n', help='input file, <mag_name>.all.maker.transcripts from FINAL_RESULT', required = True)
-parser.add_argument ('-o', dest= 'o', help='output directory,  default=Genes_with_Pfam_hit', default="Genes_with_Pfam_hit" )
+parser.add_argument ('-o', dest= 'o', help='output directory,  default = Genes_with_Pfam_hit', default="Genes_with_Pfam_hit" )
 
 args = parser.parse_args()
 
@@ -20,7 +20,7 @@ scores = {}
 short_name = {}
 
 #### functions
-def extracting (filein,fileout):
+def extracting (filein, fileout):
     with open(filein, "r") as finp, open(fileout, "w") as foutp:
         non_first_line = False
         for line in finp:
@@ -31,7 +31,7 @@ def extracting (filein,fileout):
                 if id in best_hit:
                     v = best_hit[id]
                     if non_first_line:
-                       print("", file=foutp)
+                       print("", file = foutp)
                     print("{} pfam_hit_{}_{} score: {} Protein_length: {}".format(v[0], v[1], v[2], v[3], v[4]), file = foutp)
                     copy = True
             else:
@@ -103,6 +103,6 @@ file_p = os.path.join(args.o, "proteins.faa")
 file_n = os.path.join(args.o, "genes.fna")
 file_g = os.path.join(args.o, "annotation.gff")
 
-extracting (args.p,file_p)
-extracting (args.n,file_n)
+extracting (args.p, file_p)
+extracting (args.n, file_n)
 extracting_gff(args.a, file_g)
