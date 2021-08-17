@@ -8,7 +8,7 @@ err_report() {
     exit 1
 }
 trap 'err_report $LINENO' ERR
-Usage='\nUsage: bash EMAGCsingle.sh [options]\n -m=<absolute path to mag file>\n -s=<min contig size for SNAP training, default=5000>\n -p=<threads>\n -b=<conda or module,busco environment or package name, e.g -b="conda,busco_env">\n -k=<conda or module,MAKER environment or package name, e.g., -k="module,maker">\n -a=<conda or module,hmmer environment or package name, e.g., -a="conda,annot", default -a=skip>\n -l=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -n=<number of SNAP training, default=1>\n -u=<absolute path to protein db or none, default=none>\n -r=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -w=<absolute path to Pfam hmm database or none, default=none>\n -v=<E-value threshold used during Pfam annotation, default=0.001>\n -q=<remove all temporary files, y for yes or n for no, default=no>\n'
+Usage="\nUsage: bash EMAGCsingle.sh [options]\n -m=<absolute path to mag file>\n -s=<min contig size for SNAP training, default=5000>\n -p=<threads>\n -b=<conda or module,busco environment or package name, e.g -b="conda,busco_env">\n -k=<conda or module,MAKER environment or package name, e.g., -k="module,maker">\n -a=<conda or module,hmmer environment or package name, e.g., -a="conda,annot", default -a=skip>\n -l=<busco lineage (e.g., eukaryota_odb10) or auto, default=eukaryota_odb10>\n -n=<number of SNAP training, default=1>\n -u=<absolute path to protein db or none, default=none>\n -r=<absolute path to cDNA sequence file in fasta format from an alternate organism or none, default=none>\n -w=<absolute path to Pfam hmm database or none, default=none>\n -v=<E-value threshold used during Pfam annotation, , e.g., -v='-E 0.001', default='--cut_ga'>\n -q=<remove all temporary files, y for yes or n for no, default=no>\n"
 Description="Description:\nThis program predicts genes from an Eukaryotic MAG.\nIt first trains Augustus through BUSCO (>=v4.0.2).\nThen, it predicts genes from contigs longer than a specific size (defined by the user) using Augustus in the MAKER pipeline.\nThe resulting genes are used to train SNAP through MAKER.\nAfter SNAP training, genes are called from all contigs using SNAP and AUGUSTUS in MAKER.\nThe predicted proteins are then annotated against Pfam database\n"
 Observation="Observation:\nIt can be used either the same or different virtual environments for BUSCO, MAKER and HMMER, e.g., conda activate busco, conda activate maker; or module load busco, module load maker.\nIf you need to load a module before the actual BUSCO or MAKER module, set it by entering both module names, e.g., -k='module,bioinfo-tools maker'\nIf you have already run the script, and only want to re-run MAKER (and not busco), then set -b=skip\nThe same goes if you want to skip MAKER -k=skip or Pfam annotation, -a=skip"
 #*******     Argument parse **********************************************
@@ -28,7 +28,8 @@ SNAP_trgs=1
 busco_lineage=eukaryota_odb10
 ANTENV=skip
 PfamDB="Pfam-A.hmm"
-evalue=0.001
+#evalue=0.001
+evalue="--cut_ga"
 real_pwd=$(pwd)
 
 for i in "$@"
@@ -430,7 +431,8 @@ if [[ "$ANTENV" != skip ]]; then
   out_dom="annotation_pfam/table_domain_hmmsearch_pfam"
   out_t="annotation_pfam/table_protein_hmmsearch_pfam"
   input_fasta="$mag_name.all.maker.proteins.fasta"
-  hmmsearch --cpu $threads --noali -E $evalue -o $out1 --domtblout $out_dom --tblout $out_t $PfamDB $input_fasta
+#  hmmsearch --cpu $threads --noali -E $evalue -o $out1 --domtblout $out_dom --tblout $out_t $PfamDB $input_fasta
+  hmmsearch --cpu $threads --noali $evalue --tblout $out_t $PfamDB $input_fasta >/dev/null
   annotated=$(grep -v "^#" $out_t | cut -d " " -f1 | sort -u | wc -l)
   echo "Total Pfam-annotated proteins $annotated (a hit per protein)"
   echo "INFO: Pfam-annotation is ready. Files stored in the folder FINAL_RESULT/annotation_pfam/"
